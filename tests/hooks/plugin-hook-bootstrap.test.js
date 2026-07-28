@@ -369,8 +369,14 @@ process.exit(7);
         const result = run(['shell', path.join('scripts', 'hook.sh')], {
           root,
           input: 'raw-input',
+          // System32 is excluded from this restricted PATH intentionally:
+          // C:\Windows\System32\bash.exe is the WSL launcher stub present on
+          // many Windows installs. Including System32 causes findBashBinary() to
+          // resolve that stub, which then fails with a non-zero exit when given
+          // a Windows-style .sh path. Windows DLL loading does not use the PATH
+          // env var, so powershell.exe starts fine from WindowsPowerShell\v1.0 alone.
           env: { BASH: '', PATH: process.env.SystemRoot
-            ? `${process.env.SystemRoot}\\System32\\WindowsPowerShell\\v1.0;${process.env.SystemRoot}\\System32`
+            ? `${process.env.SystemRoot}\\System32\\WindowsPowerShell\\v1.0`
             : '' },
         });
 
