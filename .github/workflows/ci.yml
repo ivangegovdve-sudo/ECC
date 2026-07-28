@@ -86,8 +86,13 @@ jobs:
             # (for example msgpackr-extract) even though this repo is Yarn-native
             # and pnpm is only exercised here as a compatibility lane.
             pnpm) pnpm install --ignore-scripts --config.strict-dep-builds=false --no-frozen-lockfile ;;
-            # Yarn Berry (v4+) removed --ignore-engines; engine checking is no longer a core feature
-            yarn) yarn install --mode=skip-build ;;
+            # Yarn Berry (v4+) removed --ignore-engines; engine checking is no longer a core feature.
+            # --no-immutable is required because yarn.lock is committed in Yarn v1 classic
+            # format: npm rewrites it in v1 format every time package-lock.json is
+            # regenerated, so a migrated Berry lockfile cannot survive here. Without this,
+            # Yarn 4 tries to migrate the lockfile and CI's implicit --immutable fails it
+            # with YN0028. Same compatibility-lane treatment as pnpm's --no-frozen-lockfile.
+            yarn) yarn install --mode=skip-build --no-immutable ;;
             bun) bun install --ignore-scripts ;;
             *) echo "Unsupported package manager: ${{ matrix.pm }}" && exit 1 ;;
           esac
