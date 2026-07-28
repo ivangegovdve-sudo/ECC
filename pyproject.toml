@@ -31,6 +31,10 @@ dev = [
     "pytest-mock>=3.12",
     "ruff>=0.4",
     "mypy>=2.1.0",
+    # tests/test_invariant_runner.py exercises skills/skill-comply, whose
+    # scripts/parser.py imports yaml. Kept in sync with
+    # skills/skill-comply/pyproject.toml.
+    "pyyaml>=6.0",
 ]
 
 [project.urls]
